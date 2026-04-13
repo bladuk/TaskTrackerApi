@@ -4,6 +4,8 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using TaskTrackerApi.Data;
 using TaskTrackerApi.Models;
+using TaskTrackerApi.Repositories;
+using TaskTrackerApi.Repositories.Interfaces;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -21,9 +23,9 @@ try
 
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("*", builder =>
+        options.AddPolicy("*", policy =>
         {
-            builder.AllowAnyOrigin()
+            policy.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyOrigin();
         });
@@ -72,6 +74,8 @@ try
             }
         });
     });
+
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
