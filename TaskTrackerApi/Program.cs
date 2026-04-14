@@ -4,9 +4,12 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
 using TaskTrackerApi.Data;
+using TaskTrackerApi.Mappings;
 using TaskTrackerApi.Models;
 using TaskTrackerApi.Repositories;
 using TaskTrackerApi.Repositories.Interfaces;
+using TaskTrackerApi.Services;
+using TaskTrackerApi.Services.Interfaces;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -77,12 +80,18 @@ try
     });
 
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+    builder.Services.AddScoped<IProjectService, ProjectService>();
 
     builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
         ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!));
     builder.Services.AddStackExchangeRedisCache(options =>
     {
         options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    });
+
+    builder.Services.AddAutoMapper(config =>
+    {
+        config.AddMaps(typeof(ProjectProfile).Assembly);
     });
 
     builder.Services.AddControllers();
