@@ -1,3 +1,3 @@
 ﻿namespace TaskTrackerApi.DTO.Common;
 
-public record PagedResult<T>(IEnumerable<T> Data, PagedResultMeta Meta);
+public record PagedResult<T>(IReadOnlyList<T> Data, PagedResultMeta Meta);

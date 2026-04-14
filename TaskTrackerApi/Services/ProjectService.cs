@@ -11,7 +11,12 @@ using TaskTrackerApi.Services.Interfaces;
 
 namespace TaskTrackerApi.Services;
 
-public class ProjectService(IUnitOfWork unitOfWork, IMapper mapper, IDistributedCache cache, IConnectionMultiplexer redis, ILogger<ProjectService> logger) : IProjectService
+public class ProjectService(
+    IUnitOfWork unitOfWork,
+    IMapper mapper,
+    IDistributedCache cache,
+    IConnectionMultiplexer redis,
+    ILogger<ProjectService> logger) : IProjectService
 {
     private const string VersionKey = "projects:version";
 
@@ -33,7 +38,7 @@ public class ProjectService(IUnitOfWork unitOfWork, IMapper mapper, IDistributed
         var (items, total) = await unitOfWork.Projects.GetPagedAsync(page, pageSize, ct);
 
         PagedResult<ProjectDto> result = new(
-            Data: mapper.Map<IEnumerable<ProjectDto>>(items),
+            Data: mapper.Map<IReadOnlyList<ProjectDto>>(items),
             Meta: new(page, pageSize, total)
         );
 
@@ -65,7 +70,7 @@ public class ProjectService(IUnitOfWork unitOfWork, IMapper mapper, IDistributed
         await unitOfWork.CommitAsync(ct);
         await IncrementCacheVersionAsync();
 
-        logger.LogInformation($"Project created: {project.Id}");
+        logger.LogInformation("Project created: {ProjectId}", project.Id);
         return mapper.Map<ProjectDto>(project);
     }
 
@@ -83,7 +88,7 @@ public class ProjectService(IUnitOfWork unitOfWork, IMapper mapper, IDistributed
         await unitOfWork.CommitAsync(ct);
         await IncrementCacheVersionAsync();
         
-        logger.LogInformation($"Project updated: {project.Id}");
+        logger.LogInformation("Project updated: {ProjectId}", project.Id);
         return mapper.Map<ProjectDto>(project);
     }
 
@@ -98,7 +103,7 @@ public class ProjectService(IUnitOfWork unitOfWork, IMapper mapper, IDistributed
         await unitOfWork.CommitAsync(ct);
         await IncrementCacheVersionAsync();
         
-        logger.LogInformation($"Project deleted: {project.Id}");
+        logger.LogInformation("Project deleted: {ProjectId}", project.Id);
     }
 
     private async Task IncrementCacheVersionAsync()

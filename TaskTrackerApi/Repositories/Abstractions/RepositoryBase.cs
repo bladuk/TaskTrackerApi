@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using TaskTrackerApi.Data;
 using TaskTrackerApi.Repositories.Interfaces;
 
@@ -24,6 +25,9 @@ public class RepositoryBase<TEntity, TKey>(TaskTrackerDbContext context) : IRepo
 
         return (items, totalCount);
     }
+
+    public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default) =>
+        Entities.AnyAsync(predicate, ct);
 
     public async Task AddAsync(TEntity entity, CancellationToken ct = default) =>
         await Entities.AddAsync(entity, ct);
