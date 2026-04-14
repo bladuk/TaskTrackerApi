@@ -28,10 +28,10 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto data, CancellationToken ct = default)
     {
-        return Ok(await projectService.CreateProjectAsync(data, ct));
+        return Created("", await projectService.CreateProjectAsync(data, ct));
     }
     
     [HttpPut("{id:guid}")]
@@ -42,10 +42,10 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     }
     
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteProject([FromRoute] Guid id, CancellationToken ct = default)
     {
         await projectService.DeleteProjectAsync(id, ct);
-        return Ok();
+        return NoContent();
     }
 }
