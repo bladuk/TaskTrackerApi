@@ -1,4 +1,6 @@
 using Asp.Versioning;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -10,6 +12,7 @@ using TaskTrackerApi.Repositories;
 using TaskTrackerApi.Repositories.Interfaces;
 using TaskTrackerApi.Services;
 using TaskTrackerApi.Services.Interfaces;
+using TaskTrackerApi.Validators;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -93,6 +96,9 @@ try
     {
         config.AddMaps(typeof(ProjectProfile).Assembly);
     });
+
+    builder.Services.AddValidatorsFromAssembly(typeof(CreateProjectDtoValidator).Assembly);
+    builder.Services.AddFluentValidationAutoValidation();
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
