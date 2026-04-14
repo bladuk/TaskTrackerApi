@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using StackExchange.Redis;
 using TaskTrackerApi.Data;
 using TaskTrackerApi.Models;
 using TaskTrackerApi.Repositories;
@@ -76,6 +77,13 @@ try
     });
 
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+    builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+        ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!));
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    });
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
