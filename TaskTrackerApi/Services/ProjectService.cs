@@ -46,7 +46,7 @@ public class ProjectService(IUnitOfWork unitOfWork, IMapper mapper, IDistributed
         Project? project = await unitOfWork.Projects.GetByIdWithTasksAsync(id, ct);
 
         return project == null
-            ? throw new EntityNotFoundException("Project", id.ToString())
+            ? throw new NotFoundException("Project", id.ToString())
             : mapper.Map<ProjectWithTasksDto>(project);
     }
 
@@ -74,7 +74,7 @@ public class ProjectService(IUnitOfWork unitOfWork, IMapper mapper, IDistributed
         Project? project = await unitOfWork.Projects.GetByIdAsync(id, ct);
         
         if (project == null)
-            throw new EntityNotFoundException("Project", id.ToString());
+            throw new NotFoundException("Project", id.ToString());
         
         project.Name = data.Name;
         project.Description = data.Description;
@@ -92,7 +92,7 @@ public class ProjectService(IUnitOfWork unitOfWork, IMapper mapper, IDistributed
         Project? project = await unitOfWork.Projects.GetByIdAsync(id, ct);
         
         if (project == null)
-            throw new EntityNotFoundException("Project", id.ToString());
+            throw new NotFoundException("Project", id.ToString());
         
         unitOfWork.Projects.Remove(project);
         await unitOfWork.CommitAsync(ct);

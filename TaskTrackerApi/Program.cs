@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
 using TaskTrackerApi.Data;
+using TaskTrackerApi.Exceptions;
 using TaskTrackerApi.Mappings;
 using TaskTrackerApi.Models;
 using TaskTrackerApi.Repositories;
@@ -100,6 +101,9 @@ try
     builder.Services.AddValidatorsFromAssembly(typeof(CreateProjectDtoValidator).Assembly);
     builder.Services.AddFluentValidationAutoValidation();
 
+    builder.Services.AddExceptionHandler<GlobalExceptionsHandler>();
+    builder.Services.AddProblemDetails();
+
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(config =>
@@ -114,7 +118,8 @@ try
         var dbContext = scope.ServiceProvider.GetRequiredService<TaskTrackerDbContext>();
         await dbContext.Database.MigrateAsync();
     }
-    
+
+    app.UseExceptionHandler();
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseSerilogRequestLogging();
