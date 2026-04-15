@@ -1,7 +1,10 @@
+using System.Text;
 using Asp.Versioning;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
@@ -105,11 +108,51 @@ try
     builder.Services.AddExceptionHandler<GlobalExceptionsHandler>();
     builder.Services.AddProblemDetails();
 
+    var jwtConfiguration = builder.Configuration.GetSection("Jwt");
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtConfiguration["Issuer"],
+                ValidAudience = jwtConfiguration["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration["Key"]))
+            };
+        });
+    builder.Services.AddAuthorization();
+
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(config =>
     {
         config.SwaggerDoc("v1", new OpenApiInfo { Title = "Task Tracker API Reference", Version = "v1" });
+        config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header using the Bearer scheme."
+        });
+        config.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
     });
 
     var app = builder.Build();
@@ -124,6 +167,8 @@ try
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseSerilogRequestLogging();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.MapControllers();
     
     app.Run();
