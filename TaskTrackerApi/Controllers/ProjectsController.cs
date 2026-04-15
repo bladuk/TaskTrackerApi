@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskTrackerApi.DTO.Common;
 using TaskTrackerApi.DTO.Projects;
@@ -27,6 +28,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
         return Ok(await projectService.GetProjectByIdAsync(id, ct));
     }
 
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto data, CancellationToken ct = default)
@@ -34,6 +36,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
         return Created("", await projectService.CreateProjectAsync(data, ct));
     }
     
+    [Authorize]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateProject([FromRoute] Guid id, [FromBody] UpdateProjectDto data, CancellationToken ct = default)
@@ -41,6 +44,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
         return Ok(await projectService.UpdateProjectAsync(id, data, ct));
     }
     
+    [Authorize]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteProject([FromRoute] Guid id, CancellationToken ct = default)

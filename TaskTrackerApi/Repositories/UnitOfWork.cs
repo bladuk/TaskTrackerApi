@@ -8,6 +8,8 @@ public sealed class UnitOfWork(TaskTrackerDbContext context) : IUnitOfWork
     public IProjectRepository Projects => new ProjectRepository(context);
     
     public ITaskRepository Tasks => new TaskRepository(context);
+
+    public IUserRepository Users => new UserRepository(context);
     
     public async Task<int> CommitAsync(CancellationToken ct = default) =>
         await context.SaveChangesAsync(ct);
