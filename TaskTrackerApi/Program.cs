@@ -89,6 +89,7 @@ try
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
     builder.Services.AddScoped<IProjectService, ProjectService>();
     builder.Services.AddScoped<ITaskService, TaskService>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
 
     builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
         ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!));
