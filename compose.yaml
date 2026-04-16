@@ -8,7 +8,7 @@
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=tasktracker;Username=postgres;Password=postgres
+      - ConnectionStrings__Postgres=Host=postgres;Port=5432;Database=tasktracker;Username=postgres;Password=postgres
       - ConnectionStrings__Redis=redis:6379
     depends_on:
       postgres:
