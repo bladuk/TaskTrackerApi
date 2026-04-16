@@ -161,7 +161,8 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<TaskTrackerDbContext>();
-        await dbContext.Database.MigrateAsync();
+        if (dbContext.Database.IsRelational())
+            await dbContext.Database.MigrateAsync();
     }
 
     app.UseExceptionHandler();
@@ -182,3 +183,5 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+public partial class Program { }
