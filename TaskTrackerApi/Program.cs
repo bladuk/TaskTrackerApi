@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Asp.Versioning;
 using FluentValidation;
@@ -131,6 +132,7 @@ try
     builder.Services.AddSwaggerGen(config =>
     {
         config.SwaggerDoc("v1", new OpenApiInfo { Title = "Task Tracker API Reference", Version = "v1" });
+        config.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
         config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Name = "Authorization",
