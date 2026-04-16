@@ -14,8 +14,8 @@ public static class MockHelpers
         Meta: new PagedResultMeta(1, 10, count)
     );
     
-    public static TaskItemDto SampleTaskDto(Guid? id = null, Guid? projectId = null) =>
-        new(id ?? Guid.NewGuid(), "Sample Task", "Sample Description", false, DateTime.UtcNow, DateTime.UtcNow, projectId ?? Guid.NewGuid());
+    public static TaskItemDto SampleTaskDto(Guid? id = null, Guid? projectId = null, string title = "Sample Task", string description = "Sample Description", bool isCompleted = false) =>
+        new(id ?? Guid.NewGuid(), title, description, isCompleted, DateTime.UtcNow, DateTime.UtcNow, projectId ?? Guid.NewGuid());
 
     public static ProjectWithTasksDto SampleProjectWithTasksDto(Guid? id = null)
     {
@@ -31,4 +31,10 @@ public static class MockHelpers
     
     public static UpdateProjectDto SampleUpdateProjectDto() =>
         new("Updated Name", "Updated Description");
+    
+    public static CreateTaskDto SampleCreateTaskDto(Guid? projectId = null) =>
+        new("Sample Task", "Sample Description", false, projectId ?? Guid.NewGuid());
+    
+    public static UpdateTaskDto SampleUpdateTaskDto(Guid? projectId = null) =>
+        new("Updated Title", "Updated Description", true, projectId ?? Guid.NewGuid());   
 }
